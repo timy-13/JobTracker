@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using JobTracker.Data;
 using JobTracker.Models;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace JobTracker.Controllers
 {
+    [Authorize]
     public class JobsController : Controller
     {
         private readonly JobTrackerContext _context;
