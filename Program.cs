@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using JobTracker.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<JobTrackerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("JobTrackerContext") ?? throw new InvalidOperationException("Connection string 'JobTrackerContext' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<JobTrackerContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -29,6 +32,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Jobs}/{action=Index}/{id?}")
     .WithStaticAssets();
-
+app.MapRazorPages();
 
 app.Run();

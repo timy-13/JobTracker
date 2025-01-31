@@ -4,6 +4,7 @@ using JobTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobTracker.Migrations
 {
     [DbContext(typeof(JobTrackerContext))]
-    partial class JobTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20250131050343_SwapToIdentityDbContext")]
+    partial class SwapToIdentityDbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace JobTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Job", (string)null);
+                    b.ToTable("Job");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
