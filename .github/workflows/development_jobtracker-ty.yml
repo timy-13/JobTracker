@@ -28,7 +28,13 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
+        
+      - name: Restore dependencies
+        run: dotnet restore
+      
+      - name: Restore .NET tools
+        run: dotnet tool restore
+        
       - name: Install dotnet ef
         run: dotnet tool install --global dotnet-ef --version 9.*
 
