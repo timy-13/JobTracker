@@ -9,6 +9,8 @@ using JobTracker.Data;
 using JobTracker.Models;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace JobTracker.Controllers
@@ -18,11 +20,13 @@ namespace JobTracker.Controllers
     {
         private readonly JobTrackerContext _context;
         private readonly ILogger<JobsController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public JobsController(JobTrackerContext context, ILogger<JobsController> logger)
+        public JobsController(JobTrackerContext context, ILogger<JobsController> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _logger = logger;
+            _userManager = userManager;
         }
 
         // GET: Jobs
@@ -35,6 +39,7 @@ namespace JobTracker.Controllers
             }
 
             var jobs = from m in _context.Job
+                       where m.UserId == _userManager.GetUserId(User)
                        select m;
 
             if (!String.IsNullOrEmpty(companySearchString))
@@ -91,12 +96,31 @@ namespace JobTracker.Controllers
         {
             _logger.LogInformation("Entered Create POST method with job: {job}", job);
 
+            var userId = _userManager.GetUserId(User);
+            if (userId != null)
+            {
+                job.UserId = userId;
+                ModelState.Remove("UserId");
+                _logger.LogInformation("Job UserId set: {userId}", userId);
+            }
+            else
+            {
+                _logger.LogWarning("User Id can not be found");
+                return RedirectToAction("Login");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(job);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Job with id {id} created successfully.", job.Id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));          
+            }
+
+
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                _logger.LogError("Model Error: " + error.ErrorMessage);
             }
 
             _logger.LogWarning("Model state is invalid for job: {job}", job);

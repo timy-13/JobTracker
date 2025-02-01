@@ -19,5 +19,7 @@ namespace JobTracker.Models
         public DateTime ApplicationDate { get; set; }
 
         public string? Status { get; set; }
+
+        public required string UserId {  get; set; }
     }
 }
