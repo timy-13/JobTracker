@@ -20,7 +20,7 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING") ?? throw new InvalidOperationException("Connection string 'AZURE_SQL_CONNECTIONSTRING' not found.")));
     builder.Services.AddStackExchangeRedisCache(options =>
     {
-        options.Configuration = builder.Configuration["AZURE_SQL_CONNECTIONSTRING"];
+        options.Configuration = builder.Configuration["AZURE_REDIS_CONNECTIONSTRING"];
         options.InstanceName = "SampleInstance";
     });
 }
